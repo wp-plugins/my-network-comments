@@ -30,10 +30,11 @@ This section describes how to install the plugin and get it working.
 
 = 3.0.1 =
 
-Initial Release for WP3.x multisite
+* Initial Release for WP3.x multisite
 
 == Upgrade Notice ==
 
 = 3.0.1 =
-WPMU version no longer supported.
+
+* WPMU version no longer supported.
 
