@@ -28,6 +28,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= 3.0.1.2 =
+
+* squashing errors when user hasn't made a comment yet.
+
 = 3.0.1 =
 
 * Initial Release for WP3.x multisite

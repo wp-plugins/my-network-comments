@@ -3,7 +3,7 @@
    Plugin Name: My Network Comments
    Plugin URI: http://wordpress.org/extend/plugins/my-network-comments/
    Description: Tracks logged in network user comments on any site in the network: Dashboard->My Network Comments. Install in "mu-plugins".
-   Version: 3.0.1
+   Version: 3.0.1.2
    Author: D. Sader
    Author URI: http://dsader.snowotherway.org
    
@@ -22,6 +22,8 @@
    Note:
    Usermeta is not updated sitewide when comments/blogs are deleted. Instead The status of the comment is reported and User can "Dismiss" further tracking of the comment/post.
    
+   Changes
+   update_user_meta replaces update_usermeta
    */
   /***********I thought about making these constants Network options at SuperAdmin->Options, but what if an inexperienced SuperAdmin cranks the queries beyong the limits of CPU/Memory? ***************/
   if (!defined('MY_COMMENTS_TRACKED'))
@@ -71,7 +73,7 @@
               }
           }
       }
-      update_usermeta($current_user->ID, 'LatestComments', $LatestCommentsList);
+      update_user_meta($current_user->ID, 'LatestComments', $LatestCommentsList);
   }
   // Comments-->My Network Comments
   function ds_my_comments_update() {
@@ -91,7 +93,7 @@
                               $LatestCommentsList = array();
                           }
                       }
-                      update_usermeta($current_user->ID, 'LatestComments', $LatestCommentsList);
+                      update_user_meta($current_user->ID, 'LatestComments', $LatestCommentsList);
                       $location = wp_get_referer();
                       $location = add_query_arg(array('action' => 'dismissed', ));
                       wp_redirect($location); // add_action must be before admin_head otherwise headers already sent errors
@@ -102,19 +104,6 @@
   function ds_my_network_comments() {
       global $current_user, $wpdb;
       $LatestCommentsList = $current_user->LatestComments;
-
-              $LatestCommentsList = array_reverse($LatestCommentsList);
-              $pre_paginate = count($LatestCommentsList);
-              $posts_per_page = MY_POSTS_APAGE;
-              if (isset($_GET['apage']))
-                  $page = absint($_GET['apage']);
-              if (empty($page))
-                  $page = 1;
-              $start = $offset = ($page - 1) * $posts_per_page;
-              $page_links = paginate_links(array('base' => add_query_arg('apage', '%#%'), 'format' => '', 'total' => ceil($pre_paginate / $posts_per_page), 'current' => $page));
-              $LatestCommentsList = array_slice($LatestCommentsList, $start, $posts_per_page);
-              $post_paginate = count($LatestCommentsList);
-  
               if (isset($_GET['action'])) {
                   if ('dismissed' == $_GET['action']) {
                       echo "<div class='updated'><p>Comment Dismissed.</p></div>";
@@ -128,6 +117,17 @@
     <p>Write a comment at an <?php echo get_site_option('site_name'); ?> blog while logged in, then revisit this page to view your comments being tracked.</p>
     <?php
           } else {
+              $LatestCommentsList = array_reverse($LatestCommentsList);
+              $pre_paginate = count($LatestCommentsList);
+              $posts_per_page = MY_POSTS_APAGE;
+              if (isset($_GET['apage']))
+                  $page = absint($_GET['apage']);
+              if (empty($page))
+                  $page = 1;
+              $start = $offset = ($page - 1) * $posts_per_page;
+              $page_links = paginate_links(array('base' => add_query_arg('apage', '%#%'), 'format' => '', 'total' => ceil($pre_paginate / $posts_per_page), 'current' => $page));
+              $LatestCommentsList = array_slice($LatestCommentsList, $start, $posts_per_page);
+              $post_paginate = count($LatestCommentsList);
 ?>
     <p>Any <?php  echo get_site_option('site_name'); ?> posts <?php echo $current_user->display_name; ?> has commented are tracked here. Only the most recent comments are shown. The post with the most recent comments is shown first with your most recent comment, followed by someone's most recent reply. When you want to stop tracking a particular comment, dismiss it.</p>
 
