@@ -1,7 +1,7 @@
 <?php
   /*
    Plugin Name: My Network Comments
-   Plugin URI: http://wordpress.org/extend/plugins/my-network-comments/
+   Plugin URI: http://dsader.snowotherway.org/wordpress-plugins/my-network-comments/
    Description: Tracks logged in network user comments on any site in the network: Dashboard->My Network Comments. Install in "mu-plugins".
    Version: 3.0.1.2
    Author: D. Sader
