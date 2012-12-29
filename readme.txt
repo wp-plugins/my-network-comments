@@ -3,7 +3,7 @@ Contributors: dsader
 Donate link: http://dsader.snowotherway.org
 Tags: multisite, network, comments, my comments, my network comments, sitewide comment, comment tracking,
 Requires at least: 3.0
-Tested up to: 3.2.1
+Tested up to: 3.5
 Stable tag: Trunk
 
 WP3.0 multisite "mu-plugin" to add "My Network Comments" page to the Dashboard.
