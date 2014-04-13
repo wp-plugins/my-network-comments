@@ -2,10 +2,11 @@
   /*
    Plugin Name: My Network Comments
    Plugin URI: http://dsader.snowotherway.org/wordpress-plugins/my-network-comments/
-   Description: Tracks logged in network user comments on any site in the network: Dashboard->My Network Comments. Install in "mu-plugins".
-   Version: 3.0.1.2
+   Description: WordPress multisite network plugin to add "My Network Comments" page to the Dashboard. Tracks logged in network user comments on any site in the network: Dashboard->My Network Comments.
+   Version: 3.0.1.3
    Author: D. Sader
    Author URI: http://dsader.snowotherway.org
+   Network: true
    
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@
   add_action('admin_init','ds_my_comments_update');
 
   function ds_tracked_comments_addmenu() {
-      $page = add_submenu_page('index.php', 'My Network Comments', 'My Network Comments', 7, 'my_network_comments', 'ds_my_network_comments');
+      $page = add_submenu_page('index.php', 'My Network Comments', 'My Network Comments', 'moderate_comments', 'my_network_comments', 'ds_my_network_comments');
   }
   function ds_track_user_comment_posting() {
       global $current_blog, $comment, $post, $current_user, $comment_post_ID;

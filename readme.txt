@@ -2,45 +2,40 @@
 Contributors: dsader
 Donate link: http://dsader.snowotherway.org
 Tags: multisite, network, comments, my comments, my network comments, sitewide comment, comment tracking,
-Requires at least: 3.0
-Tested up to: 3.7.1
+Requires at least: 3.8
+Tested up to: 3.9.0
 Stable tag: Trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-WP3.0 multisite "mu-plugin" to add "My Network Comments" page to the Dashboard.
+WordPress multisite network plugin to add "My Network Comments" page to the Dashboard.
 
 == Description ==
-WP3.0 multisite "mu-plugin" to add "My Network Comments" page to the Dashboard. Tracks all comments made by a network user on any blog in the network.
+WordPress multisite network plugin to add "My Network Comments" page to the Dashboard. Tracks all comments made by a network user on any blog in the network.
 
 == Installation ==
 
 This section describes how to install the plugin and get it working.
 
-1. Upload `ds_wp3_my_network_comments.php` to the `/wp-content/mu-plugins/` directory
-2. View Dashboard->My Network Comments
+1. Upload entire `my-network-comments` folder to the `/wp-content/plugins/` directory
+2. Network Activate the plugin through the 'Network Plugins' menu in WordPress
+3. View Dashboard->My Network Comments
 
 == Frequently Asked Questions ==
 
 * Will this plugin delete comments? No. You can dismiss whether or not to track a comment, but the comment status remains unchanged.
 * Is this the same plugin used to display "My Comments" at wordpress.com ? No. I haven't seen the code to their plugin.
-* Has this plugin been around for a while? Yes, it was called "Sitewide Comment Tracking Revisited".
 
 == Screenshots ==
 
 == Changelog ==
 
-= 3.0.1.2 =
+= 3.0.1.3 =
 
-* squashing errors when user hasn't made a comment yet.
-
-= 3.0.1 =
-
-* Initial Release for WP3.x multisite
+* fixed typo with add menu role.
 
 == Upgrade Notice ==
 
-= 3.0.1 =
+= 3.0.1.3 =
 
-* WPMU version no longer supported.
-
+* fixed typo with add menu role.
