@@ -1,9 +1,9 @@
 <?php
   /*
    Plugin Name: My Network Comments
-   Plugin URI: http://dsader.snowotherway.org/wordpress-plugins/my-network-comments/
-   Description: WordPress multisite network plugin to add "My Network Comments" page to the Dashboard. Tracks logged in network user comments on any site in the network: Dashboard->My Network Comments.
-   Version: 3.0.1.3
+   Plugin URI: http://wordpress.org/extend/plugins/my-network-comments/
+   Description: Tracks logged in network user comments on any site in the network: Dashboard->My Network Comments. Network Activate.
+   Version: 3.9.1
    Author: D. Sader
    Author URI: http://dsader.snowotherway.org
    Network: true
@@ -32,7 +32,7 @@
       define('MY_COMMENTS_TRACKED', '100');
   if (!defined('MY_POSTS_APAGE'))
       // pagination, each row = post, more = more loops for posts/comments per page
-      define('MY_POSTS_APAGE', '10');
+      define('MY_POSTS_APAGE', '20');
   if (!defined('MY_COMMENTS_APOST'))
       // how many mycomments per post(at least 1), first loop for comments pull all comments matchng logged in user, most recent at top.
       define('MY_COMMENTS_APOST', '1');
@@ -43,14 +43,25 @@
       define('POST_EXCERPT_LENGTH', '400');
   if (!defined('COMMENT_EXCERPT_LENGTH'))
       define('COMMENT_EXCERPT_LENGTH', '250');
-      
-  add_action('admin_menu', 'ds_tracked_comments_addmenu');
-  add_action('comment_post', 'ds_track_user_comment_posting');
-  add_action('trackback_post', 'ds_track_user_comment_posting');
-  add_action('admin_init','ds_my_comments_update');
+
+class My_Network_Comments {
+     		var $l10n_prefix;
+ 
+  function My_Network_Comments () { 
+  	$this->l10n_prefix = 'my-network-comments';   
+	add_action( 'init', array(&$this, 'ds_localization_init' ));
+  	add_action( 'admin_menu', array(&$this, 'ds_tracked_comments_addmenu' ));
+  	add_action( 'comment_post', array(&$this, 'ds_track_user_comment_posting' ));
+  	add_action( 'trackback_post', array(&$this, 'ds_track_user_comment_posting' ));
+  	add_action( 'admin_init',array(&$this, 'ds_my_comments_update' ));
+  }
+  function ds_localization_init() {
+		load_plugin_textdomain( 'my-network-comments', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/');
+//		load_plugin_textdomain( $this->l10n_prefix, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/');
+	}
 
   function ds_tracked_comments_addmenu() {
-      $page = add_submenu_page('index.php', 'My Network Comments', 'My Network Comments', 'moderate_comments', 'my_network_comments', 'ds_my_network_comments');
+      $page = add_submenu_page('index.php', __('My Network Comments', $this->l10n_prefix), __('My Network Comments', $this->l10n_prefix), 'moderate_comments', 'my_network_comments', array(&$this, 'ds_my_network_comments' ));
   }
   function ds_track_user_comment_posting() {
       global $current_blog, $comment, $post, $current_user, $comment_post_ID;
@@ -59,8 +70,8 @@
       $LatestCommentsList = $current_user->LatestComments;
       if (!$LatestCommentsList) {
           $LatestCommentsList = array();
-      } else {
-          $array = explode(", ", $current_user->LatestComments);
+//      } else {
+  //        $array = explode(", ", $current_user->LatestComments);
       }
       if (!in_array($addcomment, $LatestCommentsList)) {
           array_push($LatestCommentsList, $addcomment);
@@ -111,11 +122,11 @@
                   }
               }
 ?>  <div class="wrap">
-  <h2><?php _e('My Network Comments') ?></h2>
+  <h2><?php _e('My Network Comments', $this->l10n_prefix); ?></h2>
      <?php
       if (!$LatestCommentsList) {
 ?>
-    <p>Write a comment at an <?php echo get_site_option('site_name'); ?> blog while logged in, then revisit this page to view your comments being tracked.</p>
+    <p><?php _e('Write a comment on any site while logged in, then revisit this page to view your comments being tracked', $this->l10n_prefix); ?>.</p>
     <?php
           } else {
               $LatestCommentsList = array_reverse($LatestCommentsList);
@@ -130,12 +141,12 @@
               $LatestCommentsList = array_slice($LatestCommentsList, $start, $posts_per_page);
               $post_paginate = count($LatestCommentsList);
 ?>
-    <p>Any <?php  echo get_site_option('site_name'); ?> posts <?php echo $current_user->display_name; ?> has commented are tracked here. Only the most recent comments are shown. The post with the most recent comments is shown first with your most recent comment, followed by someone's most recent reply. When you want to stop tracking a particular comment, dismiss it.</p>
+    <p><?php _e( 'Any posts you comment on are tracked here. Only the most recent comments are shown. The post with the most recent comments is shown first with your most recent comment, followed by the most recent reply. When you want to stop tracking a particular comment, dismiss it', $this->l10n_prefix); ?>.</p>
 
   <form id="comments-form" action="" method="get">
   <div class="tablenav">
   <?php
-              echo $current_user->display_name . ' is tracking ' . $pre_paginate . '/' . MY_COMMENTS_TRACKED . ' post comments ... ' . $post_paginate . ' on this page.';
+              echo $current_user->display_name . ' '.__('is tracking', $this->l10n_prefix).' ' . $pre_paginate . '/' . MY_COMMENTS_TRACKED . ' '.__('post comments', $this->l10n_prefix).' ... ' . $post_paginate . ' '.__('on this page', $this->l10n_prefix).'.';
               if ($page_links)
                   : echo "<div class='tablenav-pages'>$page_links</div>";
               endif;
@@ -145,9 +156,9 @@
   <table class="widefat">
     <thead>
       <tr>
-        <th scope="col" width="45%"><?php _e('Post') ?></th>
-        <th scope="col" width="40%"><?php _e('Comments') ?></th>
-        <th scope="col" class="action-links" width="15%"><?php  _e('Actions') ?></th>
+        <th scope="col" width="45%"><?php _e('Post', $this->l10n_prefix) ?></th>
+        <th scope="col" width="40%"><?php _e('Comments', $this->l10n_prefix) ?></th>
+        <th scope="col" class="action-links" width="15%"><?php  _e('Actions', $this->l10n_prefix) ?></th>
       </tr>
     </thead>
   <tbody id="the-comment-list" class="list:comment">
@@ -195,24 +206,24 @@
                       	$post_type = $thispost->post_type;
                       	$post_status = $thispost->post_status;
                         if( $thispost->post_status == 'publish' ) {
-	                    	$post_status = 'published';
-                        	$class = 'published';
+	                    	$post_status = __('published', $this->l10n_prefix);
+                        	$class = __('published', $this->l10n_prefix);
                         }
                         if( $thispost->post_status == 'draft' ) {
-	                    	$post_status = 'draft';
-                        	$class = 'unapproved';
+	                    	$post_status = __('draft', $this->l10n_prefix);
+                        	$class = __('unapproved', $this->l10n_prefix);
                         }
                         if( $thispost->post_status == 'pending' ) {
-	                    	$post_status = 'pending review';
-                        	$class = 'unapproved';
+	                    	$post_status = __('pending review', $this->l10n_prefix);
+                        	$class = __('unapproved', $this->l10n_prefix);
                         }
                         if( $thispost->post_status == 'trash' ) {
-	                    	$post_status = 'in the trash';
-                        	$class = 'unapproved';
+	                    	$post_status = __('in the trash', $this->l10n_prefix);
+                        	$class = __('unapproved', $this->l10n_prefix);
                         }
                         if( $thispost->post_status == NULL ) {
-	                    	$post_status = 'deleted';
-                        	$class = 'unapproved';
+	                    	$post_status = __('deleted', $this->l10n_prefix);
+                        	$class = __('unapproved', $this->l10n_prefix);
                         }
                         $post_author_details = get_userdata($thispost->post_author);
 ?>
@@ -221,9 +232,9 @@
       </div>
       <h3><a href="<?php echo $post_permalink; ?>"><?php echo $thispost->post_title; ?></a></h3>
       <p><?php echo wp_html_excerpt($thispost->post_content, POST_EXCERPT_LENGTH); ?></p>
-      <p>From <a href="<?php echo $details->siteurl; ?>"><?php echo $details->blogname; ?></a>, <?php  echo mysql2date(get_option('date_format'), $thispost->post_date); ?></p>
-      <p><?php echo ucfirst($post_type) . '&nbsp;status:&nbsp;' . $post_status; ?>.</p>
-    </td>
+      <p><?php _e('From', $this->l10n_prefix); ?> <a href="<?php echo $details->siteurl; ?>"><?php echo $details->blogname; ?></a>, <?php  echo mysql2date(get_option('date_format'), $thispost->post_date); ?></p>
+      <p><?php echo ucfirst($post_type) .' '. __( 'status', $this->l10n_prefix).': ' . $post_status; ?>.</p>
+     </td>
     <td>
     <?php
     if($mycomments) {
@@ -233,45 +244,45 @@
                               $comment_type = $mycomment['comment_type'];
                               $comment_status = $mycomment['comment_approved'];
                               if ($comment_status == 1) {
-                                  $status = 'approved';
-                                  $class = 'approved';
+                                  $status = __('approved', $this->l10n_prefix);
+                                  $class = __('approved', $this->l10n_prefix);
                               }
                               if ($comment_status == 0) {
-                                  $status = 'awaiting moderation';
-                                  $class = 'unapproved';
+                                  $status = __('awaiting moderation', $this->l10n_prefix);
+                                  $class = __('unapproved', $this->l10n_prefix);
                               }
                               if ($comment_status == 'trash') {
-                                  $status = 'in the trash';
-                                  $class = 'unapproved';
+                                  $status = __('in the trash', $this->l10n_prefix);
+                                  $class = __('unapproved', $this->l10n_prefix);
                               }
                               if ($comment_status == 'spam') {
-                                  $status = 'spam';
-                                  $class = 'unapproved';
+                                  $status = __('spam', $this->l10n_prefix);
+                                  $class = __('unapproved', $this->l10n_prefix);
                               }
                               if ($comment_status == null) {
-                                  $status = 'deleted';
-                                  $class = 'unapproved';
+                                  $status = __('deleted', $this->l10n_prefix);
+                                  $class = __('unapproved', $this->l10n_prefix);
                               }
                               if ($comment_type == 'trackback')
-                                  $type = 'Trackback';
+                                  $type = __('Trackback', $this->l10n_prefix);
                               if (!$comment_type == 'trackback')
-                                  $type = 'Comment';
+                                  $type = __('Comment', $this->l10n_prefix);
 ?>
         <div class="<?php echo $class; ?>">
           <div style="float:right;margin-left:5px;margin-top:5px;"><?php echo get_avatar($mycomment['user_id'], 32); ?>
           </div>
-          <p><?php echo $mycomment['comment_author']; ?> last replied:<br /><?php echo mysql2date('l jS \of F Y h:i:s A', $mycomment['comment_date']); ?></p>
+          <p><?php echo $mycomment['comment_author']; ?> <?php _e('last replied', $this->l10n_prefix); ?>:<br /><?php echo mysql2date('l jS \of F Y h:i:s A', $mycomment['comment_date']); ?></p>
           <p><?php echo $myoutput; ?></p>
-          <p><?php echo $type . '&nbsp;status:&nbsp;' . $status; ?>.</p>
+          <p><?php echo $type .' '. __( 'status', $this->l10n_prefix).': ' . $status; ?>.</p>
         </div>
         <?php
                           }
 			    } else { // if no $mycomments
-    	       echo '<div class="unapproved"><p>Comment by ' . $current_user->display_name . ' deleted.</p></div>'; 
+    	       echo '<div class="unapproved"><p>'.__('Comment by', $this->l10n_prefix).' ' . $current_user->display_name . ' '.__('deleted', $this->l10n_prefix).'.</p></div>'; 
 
     }
                           if (!$others_comments) {
-                               echo '<div class="alternate"><p>No other replies.</p></div>';
+                               echo '<div class="alternate"><p>'.__('No other replies', $this->l10n_prefix).'.</p></div>';
                           } else {
                               foreach ($others_comments as $others_comment) {
                                   $others_output = $others_comment['comment_content'];
@@ -282,7 +293,7 @@
 ?>
           </div>
          	<p>
-          		<?php echo $others_comment['comment_author']; ?> last replied:
+          		<?php echo $others_comment['comment_author'].' '.__('last replied', $this->l10n_prefix); ?>:
 				<br />
 				<?php echo mysql2date('l jS \of F Y h:i:s A', $others_comment['comment_date']); ?>
 			</p>
@@ -291,46 +302,53 @@
         <?php
                               }
                           }
+
+
+
+if( 'open' == $thispost->comment_status ) $open_closed = __('open', $this->l10n_prefix);
+if( 'closed' == $thispost->comment_status ) $open_closed = __('closed', $this->l10n_prefix);
+
 ?>
-        <p><a href="<?php echo $post_permalink . '#comments'; ?>"><?php echo $thispost->comment_count; ?> total comments. Comments are <?php echo $thispost->comment_status; ?></a></p>
+        <p><a href="<?php echo $post_permalink . '#comments'; ?>"><?php echo $thispost->comment_count .' '.__('total comments', $this->l10n_prefix).'. '. __('Comments are', $this->l10n_prefix).' '.$open_closed ; ?>.</a></p>
     </td>
     <?php
                       } else { // if no $thepost
 ?>
-    <td class="unapproved"><strike>post deleted</strike>
+    <td class="unapproved"><strike><?php _e('post deleted', $this->l10n_prefix); ?></strike>
       <p><small><a href="<?php echo $details->siteurl; ?>"><?php echo $details->blogname; ?></a></small></p>
     </td>
     <td class="unapproved">
-      <p>Comment deleted because post_id <?php  echo $post_id; ?> was deleted.</p>
+      <p><?php _e('Comment deleted because post deleted', $this->l10n_prefix); ?>.</p>
     </td>
     <?php
                           }
                       } else { // if no $blog_id
 ?>
-    <td class="unapproved"><strike>no blog</strike></td>
+    <td class="unapproved"><strike><?php _e('no site', $this->l10n_prefix); ?></strike></td>
     <td class="unapproved">
-      <p>Comment deleted because blog_id <?php echo $blog_id; ?> was deleted.</p>
+      <p><?php _e('Comment deleted because site deleted', $this->l10n_prefix); ?>.</p>
     </td>
 <?php
                       }
                       $action_link = $_SERVER['REQUEST_URI'];
                       if (isset($thispost->ID)) {
                           $action_link = add_query_arg(array('action' => 'stoptrack', 'trackedblog' => $blog_id, 'trackedpost' => $thispost->ID));
-                          $action_text = 'Dismiss';
-                          $reply_text = 'Reply | ';
+                          $action_text = __('Dismiss', $this->l10n_prefix);
+                          $reply_text = __('Reply', $this->l10n_prefix).' | ';
                           $reply_link = $post_permalink . '#comment';
                       } elseif (!isset($thispost->ID) && isset($details->siteurl)) {
                           $action_link = add_query_arg(array('action' => 'stoptrack', 'trackedblog' => $blog_id, 'trackedpost' => $post_id));
-                          $action_text = 'Dismiss';
-                          $reply_text = 'Reply to another post | ';
+                          $action_text = __('Dismiss', $this->l10n_prefix);
+                          $reply_text = __('Reply to another post', $this->l10n_prefix).' | ';
                           $reply_link = $details->siteurl;
                       } else {
                           $action_link = add_query_arg(array('action' => 'stoptrack', 'trackedblog' => $blog_id, 'trackedpost' => $post_id));
-                          $action_text = 'Delete';
+                          $action_text = __('Delete', $this->l10n_prefix);
                       }
 ?>
       <td>
         <?php
+        if ($details) {
                       if (($details->spam == 1) || ($details->deleted == 1) || ($details->archived == 1)) {
                           echo '|';
                       } else {
@@ -338,6 +356,7 @@
         <p class="" ><a href="<?php echo $reply_link; ?>"><?php echo $reply_text; ?></a>
         <?php
                       }
+        }
 ?>
         <a href="<?php echo $action_link; ?>"><?php echo $action_text; ?></a></p>
       </td>
@@ -351,8 +370,13 @@
   <?php
                   }
                   if (is_super_admin())
-                      echo '<p>SuperAdmin, FYI: get_num_queries() = ' . get_num_queries() . '. Constants controlling the post/pagination/comment arrays can be defined near the top of the plugin code.</p>';
+                      echo '<p>SuperAdmin, get_num_queries() = ' . get_num_queries() . '. '.__('Constants controlling the post/pagination/comment arrays can be defined near the top of the plugin code', $this->l10n_prefix).'.</p>';
                   // wrap
                   echo '</div>';
   }
+  
+}
+if (class_exists("My_Network_Comments")) {
+	$My_Network_Comments = new My_Network_Comments();	
+}
 ?>

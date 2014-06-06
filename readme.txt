@@ -3,7 +3,7 @@ Contributors: dsader
 Donate link: http://dsader.snowotherway.org
 Tags: multisite, network, comments, my comments, my network comments, sitewide comment, comment tracking,
 Requires at least: 3.8
-Tested up to: 3.9.0
+Tested up to: 3.9.1
 Stable tag: Trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -30,12 +30,12 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
-= 3.0.1.3 =
+= 3.9.1 =
 
-* fixed typo with add menu role.
+* translatiom ready.
 
 == Upgrade Notice ==
 
-= 3.0.1.3 =
+= 3.9.1 =
 
-* fixed typo with add menu role.
+* translation ready.
