@@ -3,7 +3,7 @@ Contributors: dsader
 Donate link: http://dsader.snowotherway.org
 Tags: multisite, network, comments, my comments, my network comments, sitewide comment, comment tracking,
 Requires at least: 3.8
-Tested up to: 3.9.1
+Tested up to: 4.2
 Stable tag: Trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
